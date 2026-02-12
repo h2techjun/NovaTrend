@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 기본 레이아웃 */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 11%;
+    --primary: 225 73% 57%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --ring: 225 73% 57%;
+  }
+
+  .dark {
+    --background: 225 20% 7%;
+    --foreground: 210 40% 98%;
+    --card: 225 16% 12%;
+    --card-foreground: 210 40% 98%;
+    --primary: 225 73% 57%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 225 12% 18%;
+    --muted-foreground: 215 20% 65%;
+    --border: 225 12% 20%;
+    --ring: 225 73% 57%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+}
+
+/* 유틸리티 */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #5c7cfa 0%, #748ffc 50%, #91a7ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .grade-big-good {
+    border-left: 4px solid #00c853;
+  }
+  .grade-good {
+    border-left: 4px solid #2979ff;
+  }
+  .grade-bad {
+    border-left: 4px solid #ff6d00;
+  }
+  .grade-big-bad {
+    border-left: 4px solid #d50000;
+  }
+}
+
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
