@@ -1,0 +1,96 @@
+{
+  "common": {
+    "appName": "NovaTrend",
+    "tagline": "AI 뉴스 감성 분석 대시보드",
+    "login": "로그인",
+    "signup": "회원가입",
+    "upgrade": "Pro 업그레이드",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "viewMore": "더보기",
+    "search": "검색",
+    "filter": "필터",
+    "all": "전체",
+    "ad": "광고",
+    "affiliate": "제휴 링크",
+    "backToTop": "맨 위로",
+    "disclaimer": "투자에 대한 최종 판단과 책임은 사용자에게 있습니다."
+  },
+  "nav": {
+    "home": "홈",
+    "stock": "주식",
+    "crypto": "크립토",
+    "kpop": "K-POP",
+    "community": "커뮤니티"
+  },
+  "hero": {
+    "title": "AI가 분석하는 글로벌 뉴스 감성",
+    "subtitle": "주식 · 크립토 · K-POP 뉴스를 실시간 AI 감성 분석으로 대박호재부터 대박악재까지 한눈에",
+    "cta": "대시보드 바로가기",
+    "ctaSub": "커뮤니티 참여"
+  },
+  "grade": {
+    "bigGood": "대박호재",
+    "good": "호재",
+    "bad": "악재",
+    "bigBad": "대박악재"
+  },
+  "stock": {
+    "title": "글로벌 주식 뉴스",
+    "subtitle": "AI가 분석한 전 세계 주식 시장 뉴스 감성 등급",
+    "regions": {
+      "all": "전체",
+      "kr": "한국",
+      "us": "미국",
+      "eu": "유럽",
+      "global": "글로벌"
+    }
+  },
+  "crypto": {
+    "title": "크립토 마켓 뉴스",
+    "subtitle": "암호화폐 시장 뉴스 감성 분석 + 공포탐욕지수",
+    "fearGreedIndex": "공포탐욕지수",
+    "extremeFear": "극도의 공포",
+    "fear": "공포",
+    "neutral": "중립",
+    "greed": "탐욕",
+    "extremeGreed": "극도의 탐욕"
+  },
+  "kpop": {
+    "title": "K-POP 뉴스",
+    "subtitle": "아이돌 뉴스 감성 분석 + 일정",
+    "searchPlaceholder": "아이돌 검색...",
+    "trending": "트렌딩",
+    "schedule": "일정",
+    "concert": "콘서트",
+    "release": "컴백",
+    "variety": "예능",
+    "buyTicket": "티켓 구매"
+  },
+  "community": {
+    "title": "커뮤니티",
+    "subtitle": "투자 인사이트를 공유하고 토론하세요",
+    "writePost": "글쓰기",
+    "categories": {
+      "all": "전체",
+      "stock": "주식",
+      "crypto": "크립토",
+      "kpop": "K-POP",
+      "free": "자유"
+    },
+    "views": "조회",
+    "likes": "좋아요",
+    "comments": "댓글"
+  },
+  "footer": {
+    "dashboards": "대시보드",
+    "communityTitle": "커뮤니티",
+    "partners": "파트너",
+    "rules": "이용 규칙",
+    "report": "신고하기",
+    "docTranslation": "DocTranslation",
+    "copyright": "© {year} NovaTrend. 투자 조언이 아닙니다.",
+    "poweredBy": "Powered by AI Sentiment Analysis"
+  }
+}

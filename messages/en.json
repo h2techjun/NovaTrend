@@ -1,0 +1,96 @@
+{
+  "common": {
+    "appName": "NovaTrend",
+    "tagline": "AI News Sentiment Analysis Dashboard",
+    "login": "Login",
+    "signup": "Sign Up",
+    "upgrade": "Upgrade to Pro",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "viewMore": "View More",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "ad": "Sponsored",
+    "affiliate": "Affiliate",
+    "backToTop": "Back to Top",
+    "disclaimer": "Investment decisions and responsibilities lie solely with the user."
+  },
+  "nav": {
+    "home": "Home",
+    "stock": "Stocks",
+    "crypto": "Crypto",
+    "kpop": "K-POP",
+    "community": "Community"
+  },
+  "hero": {
+    "title": "AI-Powered Global News Sentiment",
+    "subtitle": "Real-time AI sentiment analysis on Stock · Crypto · K-POP news — from Big Good to Big Bad at a glance",
+    "cta": "Go to Dashboard",
+    "ctaSub": "Join Community"
+  },
+  "grade": {
+    "bigGood": "Big Good",
+    "good": "Good",
+    "bad": "Bad",
+    "bigBad": "Big Bad"
+  },
+  "stock": {
+    "title": "Global Stock News",
+    "subtitle": "AI-analyzed sentiment grades for worldwide stock market news",
+    "regions": {
+      "all": "All",
+      "kr": "Korea",
+      "us": "United States",
+      "eu": "Europe",
+      "global": "Global"
+    }
+  },
+  "crypto": {
+    "title": "Crypto Market News",
+    "subtitle": "Cryptocurrency market news sentiment analysis + Fear & Greed Index",
+    "fearGreedIndex": "Fear & Greed Index",
+    "extremeFear": "Extreme Fear",
+    "fear": "Fear",
+    "neutral": "Neutral",
+    "greed": "Greed",
+    "extremeGreed": "Extreme Greed"
+  },
+  "kpop": {
+    "title": "K-POP News",
+    "subtitle": "Idol news sentiment analysis + schedules",
+    "searchPlaceholder": "Search idols...",
+    "trending": "Trending",
+    "schedule": "Schedule",
+    "concert": "Concert",
+    "release": "Comeback",
+    "variety": "Variety Show",
+    "buyTicket": "Buy Tickets"
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Share and discuss investment insights",
+    "writePost": "Write Post",
+    "categories": {
+      "all": "All",
+      "stock": "Stocks",
+      "crypto": "Crypto",
+      "kpop": "K-POP",
+      "free": "General"
+    },
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments"
+  },
+  "footer": {
+    "dashboards": "Dashboards",
+    "communityTitle": "Community",
+    "partners": "Partners",
+    "rules": "Community Rules",
+    "report": "Report",
+    "docTranslation": "DocTranslation",
+    "copyright": "© {year} NovaTrend. Not investment advice.",
+    "poweredBy": "Powered by AI Sentiment Analysis"
+  }
+}
