@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   MessageSquare,
@@ -10,6 +11,7 @@ import {
   Eye,
   ChevronRight,
 } from 'lucide-react';
+import DirectMessage from '@/components/community/DirectMessage';
 
 // 데모 게시글
 const DEMO_POSTS = [
@@ -117,10 +119,13 @@ export default function CommunityPage() {
               </p>
             </div>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
+          <Link
+            href="/community/write"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
+          >
             <PenSquare className="h-4 w-4" />
             글쓰기
-          </button>
+          </Link>
         </div>
       </motion.div>
 
@@ -146,46 +151,47 @@ export default function CommunityPage() {
         {filtered.map((post, i) => {
           const badge = CATEGORY_BADGE[post.category];
           return (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className="group flex items-center gap-4 rounded-xl bg-[hsl(var(--card))] p-4 hover:bg-[hsl(var(--muted))] transition-colors cursor-pointer"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  {badge && (
-                    <span className={`${badge.bg} ${badge.text} rounded px-1.5 py-0.5 text-[10px] font-bold`}>
-                      {badge.label}
+            <Link key={post.id} href={`/community/${post.id}`}>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="group flex items-center gap-4 rounded-xl bg-[hsl(var(--card))] p-4 hover:bg-[hsl(var(--muted))] transition-colors cursor-pointer"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    {badge && (
+                      <span className={`${badge.bg} ${badge.text} rounded px-1.5 py-0.5 text-[10px] font-bold`}>
+                        {badge.label}
+                      </span>
+                    )}
+                    <h3 className="text-sm font-semibold truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                      {post.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
+                    <span>{post.author}</span>
+                    <span className="flex items-center gap-0.5">
+                      <Clock className="h-3 w-3" />
+                      {formatTimeAgo(post.createdAt)}
                     </span>
-                  )}
-                  <h3 className="text-sm font-semibold truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                    {post.title}
-                  </h3>
+                    <span className="flex items-center gap-0.5">
+                      <Eye className="h-3 w-3" />
+                      {post.views}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <ThumbsUp className="h-3 w-3" />
+                      {post.likes}
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <MessageSquare className="h-3 w-3" />
+                      {post.comments}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
-                  <span>{post.author}</span>
-                  <span className="flex items-center gap-0.5">
-                    <Clock className="h-3 w-3" />
-                    {formatTimeAgo(post.createdAt)}
-                  </span>
-                  <span className="flex items-center gap-0.5">
-                    <Eye className="h-3 w-3" />
-                    {post.views}
-                  </span>
-                  <span className="flex items-center gap-0.5">
-                    <ThumbsUp className="h-3 w-3" />
-                    {post.likes}
-                  </span>
-                  <span className="flex items-center gap-0.5">
-                    <MessageSquare className="h-3 w-3" />
-                    {post.comments}
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-[hsl(var(--muted-foreground))] opacity-0 group-hover:opacity-100 transition-opacity" />
-            </motion.div>
+                <ChevronRight className="h-4 w-4 text-[hsl(var(--muted-foreground))] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.div>
+            </Link>
           );
         })}
       </div>
@@ -195,6 +201,9 @@ export default function CommunityPage() {
           <p className="text-[hsl(var(--muted-foreground))]">게시글이 없습니다.</p>
         </div>
       )}
+
+      {/* 쪽지 플로팅 버튼 */}
+      <DirectMessage />
     </div>
   );
 }
