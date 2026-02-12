@@ -9,6 +9,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import NewsCard from '@/components/news/NewsCard';
+import { CrossPromoBanner } from '@/components/synergy/DocTranslation';
 import type { SentimentGrade } from '@/lib/utils';
 
 // 데모 데이터 (API 연동 전 화면 구성용)
@@ -216,6 +217,11 @@ export default function StockPage() {
           </p>
         </div>
       )}
+
+      {/* DocTranslation 크로스 프로모션 */}
+      <div className="mt-8">
+        <CrossPromoBanner />
+      </div>
     </div>
   );
 }
