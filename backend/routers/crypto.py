@@ -1,41 +1,27 @@
 """
-크립토 뉴스 + 공포탐욕지수 API 라우터
+크립토 뉴스 + 공포탐욕지수 API 라우터 — 실 데이터 연동
 
 GET /api/news/crypto — 크립토 뉴스 감성 분석
-GET /api/crypto/fear-greed — 공포탐욕지수
+GET /api/crypto/fear-greed — Alternative.me 공포탐욕지수
 """
 
 from fastapi import APIRouter, Query
-from models.schemas import NewsItem, NewsListResponse, FearGreedResponse, SentimentGrade
+from models.schemas import NewsListResponse, FearGreedResponse, SentimentGrade
+from services.news_pipeline import fetch_analyzed_news
 from datetime import datetime
+import httpx
 
 router = APIRouter()
 
-# 데모 데이터
-DEMO_CRYPTO_NEWS: list[NewsItem] = [
-    NewsItem(
-        id="crypto-1",
-        headline="비트코인 $120,000 돌파 — 기관 투자자 매수세 지속",
-        summary="비트코인이 사상 최고가를 경신하며 12만 달러를 돌파했습니다. BlackRock ETF의 대규모 유입이 핵심 동력입니다.",
-        source="CoinDesk",
-        url="https://coindesk.com/example/1",
-        grade=SentimentGrade.BIG_GOOD,
-        confidence=0.91,
-        published_at=datetime.now(),
-        keywords=["비트코인", "ETF", "BlackRock"],
-    ),
-    NewsItem(
-        id="crypto-2",
-        headline="이더리움 Pectra 업그레이드 성공 — 가스비 90% 감소",
-        summary="이더리움의 대규모 네트워크 업그레이드가 성공적으로 완료되어 가스비가 크게 감소하고 처리 속도가 향상되었습니다.",
-        source="The Block",
-        url="https://theblock.com/example/2",
-        grade=SentimentGrade.GOOD,
-        confidence=0.88,
-        published_at=datetime.now(),
-        keywords=["이더리움", "Pectra", "가스비"],
-    ),
-]
+CRYPTO_QUERIES = ["비트코인 뉴스", "이더리움 뉴스", "크립토 시장"]
+
+FEAR_GREED_LABELS = {
+    (0, 25): "극도의 공포",
+    (25, 45): "공포",
+    (45, 55): "중립",
+    (55, 75): "탐욕",
+    (75, 101): "극도의 탐욕",
+}
 
 
 @router.get("/news/crypto", response_model=NewsListResponse)
@@ -44,26 +30,49 @@ async def get_crypto_news(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=20, ge=1, le=100),
 ):
-    """크립토 뉴스 목록"""
-    items = DEMO_CRYPTO_NEWS
+    """크립토 뉴스 목록 (네이버 API → 감성 분석)"""
+    items = await fetch_analyzed_news(CRYPTO_QUERIES, display_per_query=10)
 
     if grade:
-        items = [i for i in items if i.grade == grade]
+        items = [i for i in items if i["grade"] == grade.value]
 
-    return NewsListResponse(
-        items=items[(page - 1) * limit : page * limit],
-        total=len(items),
-        page=page,
-        limit=limit,
-    )
+    total = len(items)
+    start = (page - 1) * limit
+    paged = items[start:start + limit]
+
+    return NewsListResponse(items=paged, total=total, page=page, limit=limit)
 
 
 @router.get("/crypto/fear-greed", response_model=FearGreedResponse)
 async def get_fear_greed_index():
-    """공포탐욕지수 (데모 — 추후 Alternative.me API 연동)"""
-    return FearGreedResponse(
-        value=72,
-        label="탐욕",
-        previous_close=68,
-        last_updated=datetime.now(),
-    )
+    """공포탐욕지수 (Alternative.me API)"""
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get("https://api.alternative.me/fng/?limit=2")
+            resp.raise_for_status()
+            data = resp.json()
+
+        entries = data.get("data", [])
+        current = int(entries[0]["value"]) if entries else 50
+        previous = int(entries[1]["value"]) if len(entries) > 1 else None
+
+        label = "중립"
+        for (lo, hi), lbl in FEAR_GREED_LABELS.items():
+            if lo <= current < hi:
+                label = lbl
+                break
+
+        return FearGreedResponse(
+            value=current,
+            label=label,
+            previous_close=previous,
+            last_updated=datetime.now(),
+        )
+    except Exception as e:
+        print(f"[공포탐욕] API 오류: {e}")
+        return FearGreedResponse(
+            value=50,
+            label="중립",
+            previous_close=None,
+            last_updated=datetime.now(),
+        )
