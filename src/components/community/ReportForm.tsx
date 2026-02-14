@@ -6,6 +6,7 @@ import { X, AlertTriangle, Send, CheckCircle, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useAuth } from '@/components/auth/AuthProvider';
 import type { ReportTargetType } from '@/types/community';
+import { useTranslations } from 'next-intl';
 
 interface ReportFormProps {
   targetType: ReportTargetType;
@@ -13,17 +14,9 @@ interface ReportFormProps {
   onClose: () => void;
 }
 
-const REPORT_REASONS = [
-  { value: 'spam', label: '스팸 / 광고' },
-  { value: 'hate', label: '혐오 발언 / 차별' },
-  { value: 'harassment', label: '괴롭힘 / 위협' },
-  { value: 'misinformation', label: '허위 정보' },
-  { value: 'copyright', label: '저작권 침해' },
-  { value: 'nsfw', label: '부적절한 콘텐츠' },
-  { value: 'other', label: '기타' },
-];
-
 export default function ReportForm({ targetType, targetId, onClose }: ReportFormProps) {
+  const t = useTranslations('community.report');
+  const tCommon = useTranslations('common');
   const { user } = useAuth();
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
@@ -31,12 +24,22 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const REPORT_REASONS = [
+    { value: 'spam', label: t('reasons.spam') },
+    { value: 'hate', label: t('reasons.hate') },
+    { value: 'harassment', label: t('reasons.harassment') },
+    { value: 'misinformation', label: t('reasons.misinformation') },
+    { value: 'copyright', label: t('reasons.copyright') },
+    { value: 'nsfw', label: t('reasons.nsfw') },
+    { value: 'other', label: t('reasons.other') },
+  ];
+
   const supabase = createClient();
 
   const handleSubmit = async () => {
     if (!user) return;
     if (!reason) {
-      setError('신고 사유를 선택해주세요.');
+      setError(t('errorReason'));
       return;
     }
 
@@ -81,7 +84,7 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
           <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              <h3 className="text-base font-bold">신고하기</h3>
+              <h3 className="text-base font-bold">{t('title')}</h3>
             </div>
             <button onClick={onClose}>
               <X className="h-5 w-5 text-[hsl(var(--muted-foreground))]" />
@@ -92,15 +95,15 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
             {submitted ? (
               <div className="text-center py-6">
                 <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-                <h4 className="text-lg font-bold mb-2">신고가 접수되었습니다</h4>
+                <h4 className="text-lg font-bold mb-2">{t('success')}</h4>
                 <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">
-                  운영진이 검토 후 적절한 조치를 취하겠습니다.
+                  {t('successDesc')}
                 </p>
                 <button
                   onClick={onClose}
                   className="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
                 >
-                  확인
+                  {tCommon('confirm')}
                 </button>
               </div>
             ) : (
@@ -108,7 +111,7 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
                 {/* 신고 사유 */}
                 <div>
                   <label className="text-xs font-bold text-[hsl(var(--muted-foreground))] mb-2 block">
-                    신고 사유 *
+                    {t('reason')} *
                   </label>
                   <div className="space-y-1.5">
                     {REPORT_REASONS.map((r) => (
@@ -137,12 +140,12 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
                 {/* 상세 설명 */}
                 <div>
                   <label className="text-xs font-bold text-[hsl(var(--muted-foreground))] mb-2 block">
-                    상세 설명 (선택)
+                    {t('description')}
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="추가 설명이 있다면 작성해주세요..."
+                    placeholder={t('descriptionPlaceholder')}
                     rows={3}
                     className="w-full rounded-xl bg-[hsl(var(--muted))] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-600 resize-none"
                   />
@@ -166,7 +169,7 @@ export default function ReportForm({ targetType, targetId, onClose }: ReportForm
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  신고 접수
+                  {t('submit')}
                 </button>
               </div>
             )}

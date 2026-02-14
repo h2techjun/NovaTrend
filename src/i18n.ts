@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation';
 import { getRequestConfig } from 'next-intl/server';
 
 // 지원 언어 목록
@@ -14,12 +13,14 @@ export const localeNames: Record<Locale, string> = {
   zh: '中文',
 };
 
-export default getRequestConfig(async ({ locale }) => {
-  const currentLocale = locale as string;
-  if (!locales.includes(currentLocale as Locale)) notFound();
+export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+  if (!locale || !locales.includes(locale as Locale)) {
+    locale = defaultLocale;
+  }
 
   return {
-    locale: currentLocale,
-    messages: (await import(`../messages/${currentLocale}.json`)).default,
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default,
   };
 });

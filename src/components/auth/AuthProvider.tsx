@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import type { User, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase';
 import type { Profile } from '@/types/community';
+import { useToast } from '@/context/ToastContext';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface AuthContextType {
   user: User | null;
@@ -12,6 +14,8 @@ interface AuthContextType {
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signUpWithEmail: (email: string, password: string, username: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
+  signInWithKakao: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -23,6 +27,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
 
   const supabase = createClient();
 
@@ -52,7 +60,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (session?.user) {
           await fetchProfile(session.user.id);
+          if (_event === 'SIGNED_IN') {
+            showToast(t('welcome', { email: session.user.email ?? '' }), 'success');
+          }
         } else {
+          if (_event === 'SIGNED_OUT') {
+            showToast(t('signedOut'), 'info');
+          }
           setProfile(null);
         }
 
@@ -81,7 +95,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 이메일 회원가입
   const signUpWithEmail = async (email: string, password: string, username: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        data: {
+          username,
+          display_name: username,
+          locale: locale
+        }
+      }
+    });
     if (error) return { error: error.message };
 
     // 프로필 자동 생성
@@ -94,12 +118,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           display_name: username,
           plan: 'free',
           points: 0,
-          locale: 'ko',
+          locale: locale,
         });
       if (profileError) return { error: profileError.message };
     }
 
     return { error: null };
+  };
+
+  // Google 로그인
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    return { error: error?.message ?? null };
+  };
+
+  // Kakao 로그인
+  const signInWithKakao = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'kakao',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    return { error: error?.message ?? null };
   };
 
   // 로그아웃
@@ -119,6 +165,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         signInWithEmail,
         signUpWithEmail,
+        signInWithGoogle,
+        signInWithKakao,
         signOut,
         refreshProfile,
       }}

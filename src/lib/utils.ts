@@ -33,7 +33,9 @@ export const GRADE_CLASSES: Record<SentimentGrade, string> = {
 };
 
 // API 기본 URL
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Next.js API Routes 사용 (자체 서버)
+// FastAPI 백엔드 전환 시 NEXT_PUBLIC_API_URL 설정
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // 날짜 포맷
 export function formatDate(dateStr: string): string {

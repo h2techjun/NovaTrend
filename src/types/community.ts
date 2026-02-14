@@ -11,6 +11,7 @@ export interface Profile {
   avatar_url: string | null;
   plan: "free" | "pro" | "team";
   points: number;
+  bio: string | null;
   locale: string;
   created_at: string;
   updated_at: string;

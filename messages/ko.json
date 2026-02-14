@@ -15,14 +15,76 @@
     "ad": "광고",
     "affiliate": "제휴 링크",
     "backToTop": "맨 위로",
-    "disclaimer": "투자에 대한 최종 판단과 책임은 사용자에게 있습니다."
+    "disclaimer": "투자에 대한 최종 판단과 책임은 사용자에게 있습니다.",
+    "description": "AI 기반 글로벌 뉴스 감성 분석 대시보드. 주식, 크립토, K-POP 뉴스를 4단계로 분류하여 시각화합니다.",
+    "location": "지역",
+    "grade": "등급",
+    "unauthorized": "접근 권한이 없습니다",
+    "adminOnly": "관리자만 접근할 수 있는 페이지입니다.",
+    "logout": "로그아웃",
+    "localeAbbr": "ko-KR",
+    "cancel": "취소",
+    "loginRequired": "로그인이 필요합니다",
+    "confirm": "확인",
+    "count": "개",
+    "views": "조회",
+    "likes": "좋아요",
+    "comments": "댓글"
   },
   "nav": {
     "home": "홈",
     "stock": "주식",
     "crypto": "크립토",
     "kpop": "K-POP",
-    "community": "커뮤니티"
+    "community": "커뮤니티",
+    "myProfile": "마이 프로필",
+    "adminDashboard": "관리자 대시보드",
+    "logout": "로그아웃",
+    "login": "로그인",
+    "toggleTheme": "테마 전환",
+    "userDefault": "사용자",
+    "menu": "메뉴"
+  },
+  "home": {
+    "badge": "AI 기반 뉴스 감성 분석",
+    "title1": "뉴스를",
+    "titleHighlight1": "한눈에",
+    "title2": "등급으로",
+    "titleHighlight2": "한번에",
+    "subtitle": "글로벌 주식, 크립토, K-POP 뉴스를 AI가 실시간 분석하여",
+    "subtitleSuffix": "로 분류합니다.",
+    "ctaPrimary": "대시보드 시작하기",
+    "ctaSecondary": "커뮤니티 참여하기",
+    "viewMore": "자세히 보기",
+    "whyTitle": "왜 {appName}인가?",
+    "dashboards": {
+      "stock": {
+        "title": "글로벌 주식",
+        "description": "한국·미국·유럽 주식 뉴스를 AI가 실시간 분석"
+      },
+      "crypto": {
+        "title": "크립토 마켓",
+        "description": "BTC·ETH 뉴스 + 공포탐욕지수 실시간 추적"
+      },
+      "kpop": {
+        "title": "K-POP",
+        "description": "아이돌 뉴스·일정·콘서트 티켓 한눈에"
+      }
+    },
+    "features": {
+      "aiSentiment": {
+        "title": "AI 감성 분석",
+        "description": "KR-FinBERT + FinBERT로 대박호재~대박악재 4단계 자동 분류"
+      },
+      "dedup": {
+        "title": "중복 제거",
+        "description": "같은 사건의 여러 매체 기사 → 가장 신뢰도 높은 1건만 표시"
+      },
+      "accuracy": {
+        "title": "정확도 학습",
+        "description": "과거 뉴스와 주가 흐름을 학습하여 분석 정확도 지속 향상"
+      }
+    }
   },
   "hero": {
     "title": "AI가 분석하는 글로벌 뉴스 감성",
@@ -45,6 +107,13 @@
       "us": "미국",
       "eu": "유럽",
       "global": "글로벌"
+    },
+    "status": {
+      "loading": "뉴스를 분석하고 있습니다...",
+      "error": "뉴스를 불러오는데 실패했습니다.",
+      "empty": "해당 조건의 뉴스가 없습니다.",
+      "refresh": "새로고침",
+      "retry": "다시 시도"
     }
   },
   "crypto": {
@@ -55,23 +124,61 @@
     "fear": "공포",
     "neutral": "중립",
     "greed": "탐욕",
-    "extremeGreed": "극도의 탐욕"
+    "extremeGreed": "극도의 탐욕",
+    "status": {
+      "loading": "시장을 분석하고 있습니다...",
+      "error": "데이터를 불러오는데 실패했습니다.",
+      "empty": "해당 조건의 뉴스가 없습니다.",
+      "refresh": "새로고침",
+      "retry": "다시 시도"
+    },
+    "fearGreedDesc": {
+      "extremeFear": "시장이 공포에 질려 있습니다. 이는 종종 좋은 매수 기회가 될 수 있습니다.",
+      "fear": "투자자들이 불안해하고 있습니다. 신중한 접근이 필요합니다.",
+      "neutral": "시장이 방향성을 탐색 중입니다.",
+      "greed": "투자자들이 낙관적입니다. 수익 실현을 고려해볼 수 있습니다.",
+      "extremeGreed": "시장이 과열되었습니다. 거품을 조심해야 하는 시기입니다.",
+      "default": "시장의 심리 지수입니다."
+    }
   },
   "kpop": {
-    "title": "K-POP 뉴스",
+    "title": "K-POP 뉴스 & 일정",
     "subtitle": "아이돌 뉴스 감성 분석 + 일정",
     "searchPlaceholder": "아이돌 검색...",
+    "newsTitleIdol": "{idol} 뉴스",
+    "newsTitleLatest": "최신 K-POP 뉴스",
     "trending": "트렌딩",
     "schedule": "일정",
     "concert": "콘서트",
     "release": "컴백",
     "variety": "예능",
-    "buyTicket": "티켓 구매"
+    "buyTicket": "티켓 구매",
+    "noSchedule": "예정된 일정이 없습니다.",
+    "status": {
+      "loading": "아이돌 소식을 가져오고 있습니다...",
+      "error": "데이터를 불러오는데 실패했습니다.",
+      "empty": "해당 조건의 뉴스가 없습니다.",
+      "refresh": "새로고침",
+      "retry": "다시 시도"
+    }
   },
   "community": {
     "title": "커뮤니티",
-    "subtitle": "투자 인사이트를 공유하고 토론하세요",
+    "subtitle": "투자 토론, K-POP 덕질, 자유 게시판",
     "writePost": "글쓰기",
+    "characters": "자",
+    "writeFirstPost": "첫 글을 작성해보세요",
+    "postsCountSuffix": "개의 글",
+    "pinned": "고정",
+    "anonymous": "익명",
+    "selectCategory": "카테고리 선택",
+    "postTitle": "제목",
+    "titlePlaceholder": "제목을 입력하세요",
+    "postContent": "내용",
+    "contentPlaceholder": "내용을 입력하세요 (건전한 커뮤니티 문화를 지켜주세요)",
+    "publishPost": "개시하기",
+    "errorIncomplete": "제목과 내용을 모두 입력해주세요.",
+    "successWrite": "게시글이 성공적으로 등록되었습니다.",
     "categories": {
       "all": "전체",
       "stock": "주식",
@@ -79,9 +186,79 @@
       "kpop": "K-POP",
       "free": "자유"
     },
-    "views": "조회",
-    "likes": "좋아요",
-    "comments": "댓글"
+    "status": {
+      "loading": "게시글을 불러오고 있습니다...",
+      "error": "데이터를 불러오는데 실패했습니다.",
+      "empty": "아직 게시글이 없습니다.",
+      "refresh": "새로고침",
+      "retry": "다시 시도"
+    },
+    "post": {
+      "notFound": "게시글을 찾을 수 없습니다",
+      "notFoundDesc": "삭제되었거나 존재하지 않는 게시글입니다.",
+      "backToList": "목록으로",
+      "back": "커뮤니티로 돌아가기",
+      "share": "공유",
+      "report": "신고",
+      "edit": "수정",
+      "delete": "삭제",
+      "adminDelete": "관리자 삭제",
+      "confirmDelete": "정말 삭제하시겠습니까?",
+      "linkCopied": "링크가 복사되었습니다!",
+      "anonymous": "익명"
+    },
+    "comments": {
+      "title": "댓글",
+      "placeholder": "댓글을 남겨보세요...",
+      "submit": "댓글 등록",
+      "loginRequired": "댓글을 남기려면 로그인해주세요.",
+      "noComments": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!",
+      "reply": "답글",
+      "replyPlaceholder": "답글을 입력하세요...",
+      "adminDelete": "관리자 댓글 삭제",
+      "confirmDelete": "정말로 이 댓글을 삭제하시겠습니까?"
+    },
+    "edit": {
+      "title": "게시글 수정",
+      "save": "수정 완료",
+      "errorMinTitle": "제목을 2자 이상 입력해주세요.",
+      "errorMinContent": "내용을 10자 이상 입력해주세요.",
+      "noPermission": "수정 권한이 없습니다."
+    },
+    "report": {
+      "title": "신고하기",
+      "reason": "신고 사유",
+      "description": "상세 설명 (선택)",
+      "descriptionPlaceholder": "추가 설명이 있다면 작성해주세요...",
+      "submit": "신고 접수",
+      "success": "신고가 접수되었습니다",
+      "successDesc": "운영진이 검토 후 적절한 조치를 취하겠습니다.",
+      "errorReason": "신고 사유를 선택해주세요.",
+      "reasons": {
+        "spam": "스팸 / 광고",
+        "hate": "혐오 발언 / 차별",
+        "harassment": "괴롭힘 / 위협",
+        "misinformation": "허위 정보",
+        "copyright": "저작권 침해",
+        "nsfw": "부적절한 콘텐츠",
+        "other": "기타"
+      }
+    },
+    "dailyCheckIn": {
+      "title": "출석 체크",
+      "success": "+{xp} XP 획득!",
+      "nextDay": "내일도 출석해주세요 🎯",
+      "alreadyChecked": "오늘은 이미 출석했습니다!",
+      "submit": "출석하기 (+5 XP)",
+      "error": "오류가 발생했습니다."
+    },
+    "dm": {
+      "title": "쪽지",
+      "backToList": "목록",
+      "noConversations": "아직 대화가 없습니다",
+      "inputPlaceholder": "메시지 입력...",
+      "justNow": "방금 전"
+    }
   },
   "footer": {
     "dashboards": "대시보드",
@@ -91,6 +268,190 @@
     "report": "신고하기",
     "docTranslation": "DocTranslation",
     "copyright": "© {year} NovaTrend. 투자 조언이 아닙니다.",
-    "poweredBy": "Powered by AI Sentiment Analysis"
+    "poweredBy": "Powered by AI Sentiment Analysis",
+    "tagline": "AI 기반 글로벌 뉴스 감성 분석 대시보드",
+    "disclaimer": "⚠️ 면책 조항: 본 사이트의 뉴스 분석은 AI에 의해 자동 생성되며, 투자 권유가 아닙니다. 투자 판단은 본인 책임입니다. 뉴스 헤드라인의 저작권은 각 언론사에 있으며, AI 요약은 참고용입니다.",
+    "board": "게시판"
+  },
+  "profile": {
+    "public": {
+      "title": "공개 프로필",
+      "joined": "가입일",
+      "posts": "작성 게시글",
+      "xp": "누적 경험치",
+      "bio": "자기소개",
+      "noBio": "작성된 자기소개가 없습니다.",
+      "message": "쪽지 보내기",
+      "back": "뒤로 가기",
+      "notFound": "사용자를 찾을 수 없습니다.",
+      "level": "레벨",
+      "rank": "등급",
+      "levelAchieved": "{name} 등급을 달성한 사용자입니다.",
+      "noPosts": "작성된 게시글이 없습니다."
+    },
+    "private": {
+      "title": "마이 프로필",
+      "subtitle": "활동 내역 및 보상 관리",
+      "loginRequired": "로그인이 필요합니다",
+      "loginRequiredDesc": "프로필을 보려면 먼저 로그인해주세요.",
+      "levelProgress": "레벨 진행도",
+      "stats": {
+        "points": "포인트",
+        "streak": "연속 출석",
+        "accuracy": "분석 정확도",
+        "activity": "누적 활동"
+      },
+      "checkInTitle": "출석 체크",
+      "checkInSubtitle": "매일 출석하고 XP와 보너스 포인트를 받으세요!",
+      "checkInAction": "오늘의 출석 체크 (+10 XP)",
+      "checkInDone": "오늘의 출석 완료!",
+      "settings": "개인 설정",
+      "settingsDesc": "정보 수정 및 테마 설정",
+      "logoutDesc": "안전하게 로그아웃합니다",
+      "maxLevel": "최고 레벨"
+    }
+  },
+  "settings": {
+    "profileSection": "프로필 설정",
+    "avatarUrl": "아바타 이미지 URL",
+    "displayName": "닉네임",
+    "displayNamePlaceholder": "표시할 닉네임을 입력하세요",
+    "bio": "소개글",
+    "bioPlaceholder": "본인을 소개하는 글을 입력하세요",
+    "saveChanges": "변경사항 저장",
+    "saveSuccess": "설정이 성공적으로 저장되었습니다.",
+    "saveError": "설정 저장 중 오류가 발생했습니다.",
+    "preferencesSection": "기타 설정",
+    "theme": "화면 테마",
+    "themeDark": "다크 모드",
+    "themeLight": "라이트 모드",
+    "themeToggle": "테마 변경",
+    "language": "언어 설정",
+    "dangerZone": "계정 관리",
+    "confirmLogout": "정말 로그아웃 하시겠습니까?"
+  },
+  "level": {
+    "뉴비": "뉴비",
+    "루키": "루키",
+    "레귤러": "레귤러",
+    "베테랑": "베테랑",
+    "마스터": "마스터",
+    "레전드": "레전드"
+  },
+  "notifications": {
+    "title": "알림",
+    "empty": "새로운 알림이 없습니다.",
+    "markAllRead": "모두 읽음으로 표시",
+    "types": {
+      "dm": "새 쪽지가 도착했습니다.",
+      "comment": "내 게시글에 댓글이 달렸습니다.",
+      "like": "내 게시글에 좋아요가 달렸습니다.",
+      "system": "시스템 알림"
+    },
+    "viewMore": "더 보기"
+  },
+  "rules": {
+    "title": "커뮤니티 이용 규칙",
+    "subtitle": "안전하고 건전한 커뮤니티를 위한 규칙",
+    "prohibited": {
+      "title": "금지 행위",
+      "items": [
+        "욕설, 비방, 혐오 발언 및 개인 공격",
+        "허위 정보, 가짜 뉴스 유포",
+        "투자 권유, 리딩방 홍보, 사기 관련 게시",
+        "스팸, 도배, 무의미한 반복 게시",
+        "타인의 개인정보 노출 (신상 털기)",
+        "저작권 침해 콘텐츠 게시",
+        "성적 콘텐츠 또는 불법 콘텐츠",
+        "관리자 사칭 또는 시스템 악용"
+      ]
+    },
+    "penalties": {
+      "title": "제재 단계",
+      "v1": { "level": "1단계", "action": "경고", "desc": "규칙 위반 시 경고 메시지 발송" },
+      "v2": { "level": "2단계", "action": "임시 정지", "desc": "2회 이상 경고 시 7일간 활동 제한" },
+      "v3": { "level": "3단계", "action": "영구 차단", "desc": "심각한 위반 또는 3회 이상 경고 시 영구 이용 차단" }
+    },
+    "disclaimer": {
+      "title": "면책 조항",
+      "item1": "NovaTrend에서 제공하는 뉴스 분석은 **AI에 의해 자동 생성**되며, 투자 권유가 아닙니다.",
+      "item2": "커뮤니티 게시글은 개인의 의견이며, NovaTrend의 공식 입장이 아닙니다.",
+      "item3": "모든 투자 결정은 **본인 책임**입니다.",
+      "item4": "뉴스 헤드라인의 저작권은 각 언론사에 있으며, AI 요약은 참고용입니다."
+    },
+    "report": {
+      "title": "신고 방법",
+      "step1": "1. 게시글/댓글/메시지 우측 상단의 **⚑ 신고 버튼**을 클릭합니다.",
+      "step2": "2. 신고 사유를 선택하고, 필요 시 **스크린샷을 첨부**합니다.",
+      "step3": "3. 관리팀이 24시간 이내에 검토 후 조치합니다.",
+      "urgent": "긴급 사안은 {email}로 직접 문의해주세요."
+    }
+  },
+  "auth": {
+    "login": "로그인",
+    "signup": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "username": "사용자 이름",
+    "nickname": "닉네임",
+    "passwordMin": "비밀번호는 6자 이상이어야 합니다",
+    "usernameRequired": "사용자 이름을 입력해주세요",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "비밀번호",
+    "registerPasswordPlaceholder": "6자 이상",
+    "confirmEmailTitle": "인증 메일을 확인하세요",
+    "confirmEmailDesc": "{email}로 인증 링크를 발송했습니다. 메일함을 확인해주세요.",
+    "confirmAction": "확인",
+    "or": "또는",
+    "noAccount": "계정이 없으신가요?",
+    "hasAccount": "이미 계정이 있으신가요?",
+    "successRegister": "회원가입이 완료되었습니다. 이메일 인증 후 로그인해주세요.",
+    "welcome": "{email}님, 반갑습니다!",
+    "signedOut": "로그아웃 되었습니다."
+  },
+  "admin": {
+    "title": "관리자 대시보드",
+    "tabs": {
+      "users": "유저 관리",
+      "reports": "신고 처리",
+      "posts": "게시글 관리"
+    },
+    "users": {
+        "title": "유저 목록",
+        "search": "유저 검색...",
+        "role": "역할",
+        "action": "작업",
+        "giveAdmin": "관리자 권한 부여",
+        "removeAdmin": "관리자 권한 박탈",
+        "ban": "차단",
+        "unban": "차단 해제",
+        "confirmBan": "이 사용자를 차단하시겠습니까?",
+        "confirmUnban": "이 사용자의 차단을 해제하시겠습니까?"
+    },
+    "reports": {
+        "title": "신고 목록",
+        "noReports": "대기 중인 신고가 없습니다.",
+        "reporter": "신고자",
+        "reported": "피신고자",
+        "reason": "사유",
+        "status": "상태",
+        "process": "처리",
+        "dismiss": "반려",
+        "contentLink": "내용 보기",
+        "pending": "대기중",
+        "resolved": "처리됨"
+    },
+    "roles": {
+        "master": "총관리자",
+        "admin": "관리자",
+        "user": "사용자"
+    },
+    "sanctions": {
+        "reasonPrompt": "제재 사유를 입력하세요 ({level}):",
+        "tempBan7d": "임시 정지 (7일)",
+        "applied": "제재가 적용되었습니다.",
+        "confirmDelete": "정말 삭제하시겠습니까?",
+        "deleteAndResolve": "삭제 후 처리"
+    }
   }
 }

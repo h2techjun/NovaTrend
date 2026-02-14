@@ -1,8 +1,10 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, usePathname } from '@/navigation';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useState } from 'react';
+import LocaleSwitcher from '@/components/common/LocaleSwitcher';
 import { cn } from '@/lib/utils';
 import {
   TrendingUp,
@@ -16,22 +18,27 @@ import {
   LogIn,
   LogOut,
   User,
+  Shield,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useRole } from '@/hooks/useRole';
 import AuthModal from '@/components/auth/AuthModal';
+import NotificationCenter from '@/components/layout/NotificationCenter';
 
 const NAV_ITEMS = [
-  { href: '/stock', label: '주식', icon: TrendingUp },
-  { href: '/crypto', label: '크립토', icon: Bitcoin },
-  { href: '/kpop', label: 'K-POP', icon: Music },
-  { href: '/community', label: '커뮤니티', icon: MessageSquare },
+  { href: '/stock', key: 'stock', icon: TrendingUp },
+  { href: '/crypto', key: 'crypto', icon: Bitcoin },
+  { href: '/kpop', key: 'kpop', icon: Music },
+  { href: '/community', key: 'community', icon: MessageSquare },
 ];
 
 export default function Navbar() {
+  const t = useTranslations('nav');
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { user, profile, loading, signOut } = useAuth();
+  const { canModerate } = useRole();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -42,9 +49,13 @@ export default function Navbar() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
-              NT
-            </div>
+            <Image
+              src="/logo.png"
+              alt="NovaTrend"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-lg"
+            />
             <span className="text-xl font-bold gradient-text hidden sm:inline">
               NovaTrend
             </span>
@@ -67,7 +78,7 @@ export default function Navbar() {
                   )}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               );
             })}
@@ -75,15 +86,21 @@ export default function Navbar() {
 
           {/* 우측 액션 */}
           <div className="flex items-center gap-2">
+            {/* 언어 선택 */}
+            <LocaleSwitcher />
+
             {/* 테마 전환 */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors"
-              aria-label="테마 전환"
+              aria-label={t('toggleTheme')}
             >
               <Sun className="h-5 w-5 hidden dark:block" />
               <Moon className="h-5 w-5 block dark:hidden" />
             </button>
+
+            {/* 알림 센터 (로그인 시에만 노출) */}
+            {user && <NotificationCenter />}
 
             {/* 로그인/유저 버튼 */}
             {!loading && (
@@ -96,7 +113,7 @@ export default function Navbar() {
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
                       {profile?.username?.charAt(0).toUpperCase() || <User className="h-3 w-3" />}
                     </div>
-                    <span className="hidden sm:inline">{profile?.username || '사용자'}</span>
+                    <span className="hidden sm:inline">{profile?.username || t('userDefault')}</span>
                   </button>
 
                   {/* 드롭다운 메뉴 */}
@@ -109,6 +126,24 @@ export default function Navbar() {
                         <p className="text-sm font-semibold">{profile?.display_name || profile?.username}</p>
                         <p className="text-xs text-[hsl(var(--muted-foreground))]">{user.email}</p>
                       </div>
+                      <Link
+                        href="/profile"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] transition-colors"
+                      >
+                        <User className="h-4 w-4" />
+                        {t('myProfile')}
+                      </Link>
+                      {canModerate && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] transition-colors"
+                        >
+                          <Shield className="h-4 w-4" />
+                          {t('adminDashboard')}
+                        </Link>
+                      )}
                       <button
                         onClick={async () => {
                           await signOut();
@@ -117,7 +152,7 @@ export default function Navbar() {
                         className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-red-500 hover:bg-red-500/5 transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
-                        로그아웃
+                        {t('logout')}
                       </button>
                     </div>
                   )}
@@ -128,7 +163,7 @@ export default function Navbar() {
                   className="flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
                 >
                   <LogIn className="h-4 w-4" />
-                  <span className="hidden sm:inline">로그인</span>
+                  <span className="hidden sm:inline">{t('login')}</span>
                 </button>
               )
             )}
@@ -137,7 +172,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"
-              aria-label="메뉴"
+              aria-label={t('menu')}
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -163,7 +198,7 @@ export default function Navbar() {
                   )}
                 >
                   <Icon className="h-5 w-5" />
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               );
             })}
@@ -175,7 +210,7 @@ export default function Navbar() {
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-600"
               >
                 <LogIn className="h-5 w-5" />
-                로그인
+                {t('login')}
               </button>
             )}
           </nav>

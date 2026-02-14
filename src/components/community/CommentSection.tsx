@@ -11,27 +11,25 @@ import {
   ChevronDown,
   ChevronUp,
   Flag,
+  Trash2,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useRole } from '@/hooks/useRole';
+import LevelBadge from '@/components/community/LevelBadge';
 import type { Comment } from '@/types/community';
+import { useTranslations, useFormatter } from 'next-intl';
 
 interface CommentSectionProps {
   postId: number;
 }
 
-function formatTimeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return '방금 전';
-  if (m < 60) return `${m}분 전`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}시간 전`;
-  return `${Math.floor(h / 24)}일 전`;
-}
-
 export default function CommentSection({ postId }: CommentSectionProps) {
+  const t = useTranslations('community.comments');
+  const tCommon = useTranslations('common');
+  const format = useFormatter();
   const { user } = useAuth();
+  const { canModerate } = useRole();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
@@ -39,6 +37,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
+  const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
+  const [commentLikeCounts, setCommentLikeCounts] = useState<Record<number, number>>({});
 
   const supabase = createClient();
 
@@ -46,7 +46,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const fetchComments = useCallback(async () => {
     const { data, error } = await supabase
       .from('comments')
-      .select('*, author:profiles!comments_author_id_fkey(id, username, display_name, avatar_url)')
+      .select('*, author:profiles!comments_author_id_fkey(id, username, display_name, avatar_url, xp, level)')
       .eq('post_id', postId)
       .eq('is_deleted', false)
       .order('created_at', { ascending: true });
@@ -77,9 +77,58 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     setLoading(false);
   }, [postId, supabase]);
 
+  // 댓글 좋아요 상태 조회
+  const fetchCommentLikes = useCallback(async (commentIds: number[]) => {
+    if (!user || commentIds.length === 0) return;
+    const { data } = await supabase
+      .from('likes')
+      .select('target_id')
+      .eq('user_id', user.id)
+      .eq('target_type', 'comment')
+      .in('target_id', commentIds);
+    if (data) {
+      setLikedComments(new Set(data.map((l) => l.target_id)));
+    }
+  }, [user, supabase]);
+
+  // 댓글 좋아요 토글
+  const toggleCommentLike = async (commentId: number) => {
+    if (!user) return;
+    const wasLiked = likedComments.has(commentId);
+    if (wasLiked) {
+      await supabase.from('likes').delete()
+        .eq('user_id', user.id).eq('target_type', 'comment').eq('target_id', commentId);
+      setLikedComments((prev) => { const n = new Set(prev); n.delete(commentId); return n; });
+      setCommentLikeCounts((prev) => ({ ...prev, [commentId]: Math.max((prev[commentId] || 0) - 1, 0) }));
+    } else {
+      await supabase.from('likes').insert({ user_id: user.id, target_type: 'comment', target_id: commentId });
+      setLikedComments((prev) => new Set(prev).add(commentId));
+      setCommentLikeCounts((prev) => ({ ...prev, [commentId]: (prev[commentId] || 0) + 1 }));
+    }
+  };
+
+  // 관리자 댓글 삭제
+  const handleDeleteComment = async (commentId: number) => {
+    if (!confirm(t('confirmDelete'))) return;
+    await supabase.from('comments').update({ is_deleted: true }).eq('id', commentId);
+    await fetchComments();
+  };
+
   useEffect(() => {
     fetchComments();
   }, [fetchComments]);
+
+  // 댓글 로드 후 좋아요 상태 조회
+  useEffect(() => {
+    if (comments.length > 0) {
+      const allIds = comments.flatMap((c) => [c.id, ...(c.replies?.map((r) => r.id) || [])]);
+      fetchCommentLikes(allIds);
+      // likes count 초기화
+      const counts: Record<number, number> = {};
+      comments.forEach((c) => { counts[c.id] = c.likes || 0; c.replies?.forEach((r) => { counts[r.id] = r.likes || 0; }); });
+      setCommentLikeCounts(counts);
+    }
+  }, [comments, fetchCommentLikes]);
 
   // 댓글 작성
   const handleSubmitComment = async () => {
@@ -141,7 +190,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-4">
         <MessageSquare className="h-5 w-5 text-brand-600" />
-        <h2 className="text-lg font-bold">댓글 {totalCount > 0 && `(${totalCount})`}</h2>
+        <h2 className="text-lg font-bold">{t('title')} {totalCount > 0 && `(${totalCount})`}</h2>
       </div>
 
       {/* 댓글 입력 */}
@@ -154,7 +203,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="댓글을 남겨보세요..."
+              placeholder={t('placeholder')}
               rows={3}
               className="w-full rounded-xl bg-[hsl(var(--muted))] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-600 resize-none"
             />
@@ -165,14 +214,14 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                 className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                댓글 등록
+                {t('submit')}
               </button>
             </div>
           </div>
         </div>
       ) : (
         <p className="text-center text-sm text-[hsl(var(--muted-foreground))] bg-[hsl(var(--muted))] rounded-xl py-4 mb-6">
-          댓글을 남기려면 로그인해주세요.
+          {t('loginRequired')}
         </p>
       )}
 
@@ -183,7 +232,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         </div>
       ) : comments.length === 0 ? (
         <p className="text-center text-sm text-[hsl(var(--muted-foreground))] py-8">
-          아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
+          {t('noComments')}
         </p>
       ) : (
         <div className="space-y-4">
@@ -197,21 +246,43 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-semibold">
-                      {comment.author?.display_name || comment.author?.username || '익명'}
+                      {comment.author?.display_name || comment.author?.username || tCommon('anonymous')}
                     </span>
+                    {comment.author && <LevelBadge xp={(comment.author as any).xp || 0} level={(comment.author as any).level || 1} />}
                     <span className="text-xs text-[hsl(var(--muted-foreground))] flex items-center gap-0.5">
                       <Clock className="h-3 w-3" />
-                      {formatTimeAgo(comment.created_at)}
+                      {format.relativeTime(new Date(comment.created_at))}
                     </span>
                   </div>
                   <p className="text-sm mb-2 whitespace-pre-wrap">{comment.content}</p>
                   <div className="flex items-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
+                    {/* 좋아요 */}
+                    <button
+                      onClick={() => toggleCommentLike(comment.id)}
+                      disabled={!user}
+                      className={`flex items-center gap-0.5 transition-colors ${
+                        likedComments.has(comment.id) ? 'text-brand-600' : 'hover:text-brand-600'
+                      }`}
+                    >
+                      <ThumbsUp className={`h-3 w-3 ${likedComments.has(comment.id) ? 'fill-brand-600' : ''}`} />
+                      {commentLikeCounts[comment.id] || 0}
+                    </button>
                     {user && (
                       <button
                         onClick={() => { setReplyTo(replyTo === comment.id ? null : comment.id); setReplyContent(''); }}
                         className="hover:text-brand-600 transition-colors"
                       >
-                        답글
+                        {t('reply')}
+                      </button>
+                    )}
+                    {/* 관리자 삭제 */}
+                    {canModerate && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="hover:text-red-500 transition-colors"
+                        title={t('adminDelete')}
+                      >
+                        <Trash2 className="h-3 w-3" />
                       </button>
                     )}
                     {comment.replies && comment.replies.length > 0 && (
@@ -220,7 +291,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                         className="flex items-center gap-0.5 hover:text-brand-600 transition-colors"
                       >
                         {expandedReplies.has(comment.id) ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                        답글 {comment.replies.length}개
+                        {t('reply')} {comment.replies.length}{tCommon('count')}
                       </button>
                     )}
                   </div>
@@ -232,7 +303,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                         type="text"
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder="답글을 입력하세요..."
+                        placeholder={t('replyPlaceholder')}
                         className="flex-1 rounded-lg bg-[hsl(var(--muted))] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-600"
                         onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmitReply(comment.id); }}}
                       />
@@ -257,10 +328,10 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
                               <span className="text-xs font-semibold">
-                                {reply.author?.display_name || reply.author?.username || '익명'}
+                                {reply.author?.display_name || reply.author?.username || tCommon('anonymous')}
                               </span>
                               <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                                {formatTimeAgo(reply.created_at)}
+                                {format.relativeTime(new Date(reply.created_at))}
                               </span>
                             </div>
                             <p className="text-sm whitespace-pre-wrap">{reply.content}</p>

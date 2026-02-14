@@ -2,75 +2,67 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, MessageCircle, Circle } from 'lucide-react';
+import { Send, X, MessageCircle, Circle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { useDM } from '@/hooks/useDM';
 
 /**
- * ✉️ 쪽지 (DM) 컴포넌트
- *
- * 기능:
- * - 대화 목록 표시
- * - 실시간 메시지 전송/수신 (추후 Supabase Realtime 연동)
- * - 읽음 표시
- * - 플로팅 버튼으로 열기/닫기
+ * ✉️ DM(쪽지) 컴포넌트 — Supabase Realtime 연동
  */
+import { useTranslations, useFormatter } from 'next-intl';
 
-interface Message {
-  id: number;
-  senderId: string;
-  senderName: string;
-  content: string;
-  isRead: boolean;
-  createdAt: string;
-}
-
-interface Conversation {
-  id: string;
-  partner: {
-    username: string;
-    avatarUrl?: string;
-  };
-  lastMessage: string;
-  unreadCount: number;
-  updatedAt: string;
-}
-
-// 데모 대화 목록
-const DEMO_CONVERSATIONS: Conversation[] = [
-  {
-    id: '1',
-    partner: { username: 'stock_master' },
-    lastMessage: '삼성전자 분석 자료 공유해드릴까요?',
-    unreadCount: 2,
-    updatedAt: '방금 전',
-  },
-  {
-    id: '2',
-    partner: { username: 'kpop_fan' },
-    lastMessage: 'BTS 콘서트 티켓 양도 관련 문의합니다',
-    unreadCount: 0,
-    updatedAt: '30분 전',
-  },
-];
-
-const DEMO_MESSAGES: Message[] = [
-  { id: 1, senderId: 'other', senderName: 'stock_master', content: '안녕하세요! 주식 분석 게시글 잘 봤습니다', isRead: true, createdAt: '10:00' },
-  { id: 2, senderId: 'me', senderName: 'me', content: '감사합니다! 어떤 부분이 도움이 되셨나요?', isRead: true, createdAt: '10:02' },
-  { id: 3, senderId: 'other', senderName: 'stock_master', content: '삼성전자 HBM 분석이요. 추가 자료도 있으신가요?', isRead: true, createdAt: '10:05' },
-  { id: 4, senderId: 'other', senderName: 'stock_master', content: '삼성전자 분석 자료 공유해드릴까요?', isRead: false, createdAt: '10:08' },
-];
-
+/**
+ * ✉️ DM(쪽지) 컴포넌트 — Supabase Realtime 연동
+ */
 export default function DirectMessage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
-  const [messageText, setMessageText] = useState('');
+  const t = useTranslations('community.dm');
+  const tComments = useTranslations('community.comments');
+  const format = useFormatter();
+  const { user } = useAuth();
+  const {
+    conversations,
+    messages,
+    activePartnerId,
+    totalUnread,
+    loading,
+    sendMessage,
+    selectConversation,
+    clearSelection,
+    isOpen,
+    openDM,
+    closeDM,
+  } = useDM();
 
-  const totalUnread = DEMO_CONVERSATIONS.reduce((sum, c) => sum + c.unreadCount, 0);
+  const [messageText, setMessageText] = useState('');
+  const [sending, setSending] = useState(false);
+
+  if (!user) return null;
+
+  const handleSend = async () => {
+    if (!activePartnerId || !messageText.trim() || sending) return;
+    setSending(true);
+    await sendMessage(activePartnerId, messageText);
+    setMessageText('');
+    setSending(false);
+  };
+
+  const activePartner = conversations.find((c) => c.partnerId === activePartnerId)?.partner;
+
+  function formatTimeAgo(dateStr: string): string {
+    return format.relativeTime(new Date(dateStr));
+  }
+
+  // Toggle function for floating button
+  const toggleDM = () => {
+    if (isOpen) closeDM();
+    else openDM();
+  };
 
   return (
     <>
       {/* 플로팅 쪽지 버튼 */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDM}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg hover:bg-brand-700 transition-all hover:scale-105"
       >
         <MessageCircle className="h-6 w-6" />
@@ -93,15 +85,15 @@ export default function DirectMessage() {
             {/* 헤더 */}
             <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
               <h3 className="text-sm font-bold">
-                {selectedConv ? selectedConv.partner.username : '쪽지'}
+                {activePartner ? (activePartner.display_name || activePartner.username) : t('title')}
               </h3>
               <div className="flex items-center gap-2">
-                {selectedConv && (
-                  <button onClick={() => setSelectedConv(null)} className="text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
-                    ← 목록
+                {activePartnerId && (
+                  <button onClick={clearSelection} className="text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+                    ← {t('backToList')}
                   </button>
                 )}
-                <button onClick={() => setIsOpen(false)}>
+                <button onClick={closeDM}>
                   <X className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                 </button>
               </div>
@@ -109,51 +101,61 @@ export default function DirectMessage() {
 
             {/* 대화 목록 or 메시지 */}
             <div className="h-80 overflow-y-auto">
-              {!selectedConv ? (
-                <div className="divide-y divide-[hsl(var(--border))]">
-                  {DEMO_CONVERSATIONS.map((conv) => (
-                    <button
-                      key={conv.id}
-                      onClick={() => setSelectedConv(conv)}
-                      className="flex w-full items-center gap-3 p-3 hover:bg-[hsl(var(--muted))] transition-colors text-left"
-                    >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white text-sm font-bold shrink-0">
-                        {conv.partner.username[0].toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold">{conv.partner.username}</span>
-                          <span className="text-[10px] text-[hsl(var(--muted-foreground))]">{conv.updatedAt}</span>
-                        </div>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">{conv.lastMessage}</p>
-                      </div>
-                      {conv.unreadCount > 0 && (
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] text-white font-bold shrink-0">
-                          {conv.unreadCount}
-                        </span>
-                      )}
-                    </button>
-                  ))}
+              {loading ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
                 </div>
+              ) : !activePartnerId ? (
+                conversations.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                    <MessageCircle className="h-8 w-8 text-[hsl(var(--muted-foreground))] mb-2 opacity-40" />
+                    <p className="text-sm text-[hsl(var(--muted-foreground))]">{t('noConversations')}</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[hsl(var(--border))]">
+                    {conversations.map((conv) => (
+                      <button
+                        key={conv.partnerId}
+                        onClick={() => selectConversation(conv.partnerId)}
+                        className="flex w-full items-center gap-3 p-3 hover:bg-[hsl(var(--muted))] transition-colors text-left"
+                      >
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white text-sm font-bold shrink-0">
+                          {(conv.partner.display_name || conv.partner.username)?.[0]?.toUpperCase() || '?'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold">{conv.partner.display_name || conv.partner.username}</span>
+                            <span className="text-[10px] text-[hsl(var(--muted-foreground))]">{formatTimeAgo(conv.lastMessageAt)}</span>
+                          </div>
+                          <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">{conv.lastMessage}</p>
+                        </div>
+                        {conv.unreadCount > 0 && (
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] text-white font-bold shrink-0">
+                            {conv.unreadCount}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )
               ) : (
                 <div className="p-3 space-y-3">
-                  {DEMO_MESSAGES.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
-                    >
+                  {messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                       <div
                         className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm ${
-                          msg.senderId === 'me'
+                          msg.sender_id === user.id
                             ? 'bg-brand-600 text-white rounded-br-md'
                             : 'bg-[hsl(var(--muted))] rounded-bl-md'
                         }`}
                       >
                         <p>{msg.content}</p>
-                        <div className={`flex items-center gap-1 mt-1 ${msg.senderId === 'me' ? 'justify-end' : ''}`}>
-                          <span className="text-[10px] opacity-60">{msg.createdAt}</span>
-                          {msg.senderId === 'me' && (
-                            <Circle className={`h-2 w-2 ${msg.isRead ? 'fill-white' : 'fill-none'}`} />
+                        <div className={`flex items-center gap-1 mt-1 ${msg.sender_id === user.id ? 'justify-end' : ''}`}>
+                          <span className="text-[10px] opacity-60">
+                            {format.dateTime(new Date(msg.created_at), { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          {msg.sender_id === user.id && (
+                            <Circle className={`h-2 w-2 ${msg.is_read ? 'fill-current' : 'fill-none'}`} />
                           )}
                         </div>
                       </div>
@@ -164,17 +166,22 @@ export default function DirectMessage() {
             </div>
 
             {/* 메시지 입력 */}
-            {selectedConv && (
+            {activePartnerId && (
               <div className="flex items-center gap-2 p-3 border-t border-[hsl(var(--border))]">
                 <input
                   type="text"
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="메시지 입력..."
+                  placeholder={t('inputPlaceholder')}
                   className="flex-1 rounded-lg bg-[hsl(var(--muted))] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-600"
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
                 />
-                <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors">
-                  <Send className="h-4 w-4" />
+                <button
+                  onClick={handleSend}
+                  disabled={!messageText.trim() || sending}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors disabled:opacity-50"
+                >
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>
               </div>
             )}

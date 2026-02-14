@@ -15,14 +15,76 @@
     "ad": "Sponsored",
     "affiliate": "Affiliate",
     "backToTop": "Back to Top",
-    "disclaimer": "Investment decisions and responsibilities lie solely with the user."
+    "disclaimer": "Investment decisions and responsibilities lie solely with the user.",
+    "description": "AI-powered global news sentiment analysis dashboard. Categorizes stock, crypto, and K-POP news into 4 levels.",
+    "location": "Location",
+    "grade": "Grade",
+    "unauthorized": "Unauthorized access",
+    "adminOnly": "This page is only accessible to administrators.",
+    "logout": "Logout",
+    "localeAbbr": "en-US",
+    "cancel": "Cancel",
+    "loginRequired": "Login required",
+    "confirm": "Confirm",
+    "count": "",
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments"
   },
   "nav": {
     "home": "Home",
     "stock": "Stocks",
     "crypto": "Crypto",
     "kpop": "K-POP",
-    "community": "Community"
+    "community": "Community",
+    "myProfile": "My Profile",
+    "adminDashboard": "Admin Dashboard",
+    "logout": "Logout",
+    "login": "Login",
+    "toggleTheme": "Toggle Theme",
+    "userDefault": "User",
+    "menu": "Menu"
+  },
+  "home": {
+    "badge": "AI-Powered News Sentiment",
+    "title1": "News at",
+    "titleHighlight1": "a Glance",
+    "title2": "Graded in",
+    "titleHighlight2": "an Instant",
+    "subtitle": "AI analyzes global Stock, Crypto, and K-POP news in real-time, classifying them as",
+    "subtitleSuffix": ".",
+    "ctaPrimary": "Start Dashboard",
+    "ctaSecondary": "Join Community",
+    "viewMore": "Learn More",
+    "whyTitle": "Why {appName}?",
+    "dashboards": {
+      "stock": {
+        "title": "Global Stocks",
+        "description": "AI-powered real-time analysis of Korean, US & European stock news"
+      },
+      "crypto": {
+        "title": "Crypto Market",
+        "description": "BTC & ETH news + real-time Fear & Greed Index tracking"
+      },
+      "kpop": {
+        "title": "K-POP",
+        "description": "Idol news, schedules & concert tickets at a glance"
+      }
+    },
+    "features": {
+      "aiSentiment": {
+        "title": "AI Sentiment Analysis",
+        "description": "Auto-classification into 4 tiers from Big Good to Big Bad using KR-FinBERT + FinBERT"
+      },
+      "dedup": {
+        "title": "Deduplication",
+        "description": "Multiple articles on the same event → Only the most reliable one is shown"
+      },
+      "accuracy": {
+        "title": "Accuracy Learning",
+        "description": "Continuously improving analysis accuracy by learning from past news and price trends"
+      }
+    }
   },
   "hero": {
     "title": "AI-Powered Global News Sentiment",
@@ -45,6 +107,13 @@
       "us": "United States",
       "eu": "Europe",
       "global": "Global"
+    },
+    "status": {
+      "loading": "Analyzing news...",
+      "error": "Failed to load news.",
+      "empty": "No news found matching criteria.",
+      "refresh": "Refresh",
+      "retry": "Retry"
     }
   },
   "crypto": {
@@ -55,33 +124,141 @@
     "fear": "Fear",
     "neutral": "Neutral",
     "greed": "Greed",
-    "extremeGreed": "Extreme Greed"
+    "extremeGreed": "Extreme Greed",
+    "status": {
+      "loading": "Analyzing market...",
+      "error": "Failed to load data.",
+      "empty": "No news found matching criteria.",
+      "refresh": "Refresh",
+      "retry": "Retry"
+    },
+    "fearGreedDesc": {
+      "extremeFear": "The market is in extreme fear. This can often be a good buying opportunity.",
+      "fear": "Investors are nervous. A cautious approach is needed.",
+      "neutral": "The market is searching for direction.",
+      "greed": "Investors are optimistic. Consider taking profits.",
+      "extremeGreed": "The market is overheated. Be careful of potential bubbles.",
+      "default": "Market sentiment index."
+    }
   },
   "kpop": {
-    "title": "K-POP News",
-    "subtitle": "Idol news sentiment analysis + schedules",
-    "searchPlaceholder": "Search idols...",
+    "title": "K-POP News & Schedule",
+    "subtitle": "Idol News Sentiment Analysis + Schedule",
+    "searchPlaceholder": "Search Idols...",
+    "newsTitleIdol": "{idol} News",
+    "newsTitleLatest": "Latest K-POP News",
     "trending": "Trending",
     "schedule": "Schedule",
     "concert": "Concert",
     "release": "Comeback",
-    "variety": "Variety Show",
-    "buyTicket": "Buy Tickets"
+    "variety": "Variety",
+    "buyTicket": "Buy Tickets",
+    "noSchedule": "No upcoming schedules.",
+    "status": {
+      "loading": "Loading idol news...",
+      "error": "Failed to load data.",
+      "empty": "No news found.",
+      "refresh": "Refresh",
+      "retry": "Retry"
+    }
   },
   "community": {
     "title": "Community",
-    "subtitle": "Share and discuss investment insights",
+    "subtitle": "Investment Discussions, K-POP Fandom, Free Talk",
     "writePost": "Write Post",
+    "characters": "characters",
+    "writeFirstPost": "Write your first post",
+    "postsCountSuffix": "posts",
+    "pinned": "Pinned",
+    "anonymous": "Anonymous",
+    "selectCategory": "Select Category",
+    "postTitle": "Title",
+    "titlePlaceholder": "Enter title",
+    "postContent": "Content",
+    "contentPlaceholder": "Write your content here (Please keep it community-friendly)",
+    "publishPost": "Publish",
+    "errorIncomplete": "Please enter both title and content.",
+    "successWrite": "Your post has been successfully published.",
     "categories": {
       "all": "All",
       "stock": "Stocks",
       "crypto": "Crypto",
       "kpop": "K-POP",
-      "free": "General"
+      "free": "Free"
     },
-    "views": "Views",
-    "likes": "Likes",
-    "comments": "Comments"
+    "status": {
+      "loading": "Loading posts...",
+      "error": "Failed to load data.",
+      "empty": "No posts yet.",
+      "refresh": "Refresh",
+      "retry": "Retry"
+    },
+    "post": {
+      "notFound": "Post not found",
+      "notFoundDesc": "The post has been deleted or does not exist.",
+      "backToList": "Back to list",
+      "back": "Back to community",
+      "share": "Share",
+      "report": "Report",
+      "edit": "Edit",
+      "delete": "Delete",
+      "adminDelete": "Admin Delete",
+      "confirmDelete": "Are you sure you want to delete this?",
+      "linkCopied": "Link copied to clipboard!",
+      "anonymous": "Anonymous"
+    },
+    "comments": {
+      "title": "Comments",
+      "placeholder": "Leave a comment...",
+      "submit": "Submit Comment",
+      "loginRequired": "Please login to leave a comment.",
+      "noComments": "No comments yet. Be the first to comment!",
+      "reply": "Reply",
+      "replyPlaceholder": "Enter your reply...",
+      "adminDelete": "Admin Delete",
+      "confirmDelete": "Are you sure you want to delete this comment?"
+    },
+    "edit": {
+      "title": "Edit Post",
+      "save": "Save Changes",
+      "errorMinTitle": "Title must be at least 2 characters.",
+      "errorMinContent": "Content must be at least 10 characters.",
+      "noPermission": "You do not have permission to edit this post."
+    },
+    "report": {
+      "title": "Report",
+      "reason": "Report Reason",
+      "description": "Details (Optional)",
+      "descriptionPlaceholder": "Please provide more details if needed...",
+      "submit": "Submit Report",
+      "success": "Report submitted",
+      "successDesc": "The moderation team will review it shortly.",
+      "errorReason": "Please select a reason.",
+      "reasons": {
+        "spam": "Spam / Advertising",
+        "hate": "Hate Speech / Discrimination",
+        "harassment": "Harassment / Threats",
+        "misinformation": "Misinformation",
+        "copyright": "Copyright Infringement",
+        "nsfw": "Inappropriate Content",
+        "other": "Other"
+      }
+    },
+    "dailyCheckIn": {
+      "title": "Daily Check-in",
+      "success": "+{xp} XP Earned!",
+      "nextDay": "Please come back tomorrow 🎯",
+      "alreadyChecked": "Already checked in today!",
+      "submit": "Check-in (+5 XP)",
+      "error": "An error occurred."
+    },
+    "dm": {
+      "title": "Direct Message",
+      "backToList": "Back",
+      "noConversations": "No conversations yet",
+      "inputPlaceholder": "Type a message...",
+      "justNow": "Just now"
+    }
   },
   "footer": {
     "dashboards": "Dashboards",
@@ -91,6 +268,190 @@
     "report": "Report",
     "docTranslation": "DocTranslation",
     "copyright": "© {year} NovaTrend. Not investment advice.",
-    "poweredBy": "Powered by AI Sentiment Analysis"
+    "poweredBy": "Powered by AI Sentiment Analysis",
+    "tagline": "AI-Powered Global News Sentiment Analysis",
+    "disclaimer": "⚠️ Disclaimer: News analysis on this site is automatically generated by AI and does not constitute investment advice. Investment decisions are the user's responsibility. Copyright of news headlines belongs to respective publishers; AI summaries are for reference only.",
+    "board": "Message Board"
+  },
+  "profile": {
+    "public": {
+      "title": "Public Profile",
+      "joined": "Joined",
+      "posts": "Posts",
+      "xp": "Total XP",
+      "bio": "Bio",
+      "noBio": "No bio written yet.",
+      "message": "Send Message",
+      "back": "Go Back",
+      "notFound": "User not found.",
+      "level": "Level",
+      "rank": "Rank",
+      "levelAchieved": "This user has achieved the {name} rank.",
+      "noPosts": "No posts written."
+    },
+    "private": {
+      "title": "My Profile",
+      "subtitle": "Activity history & rewards",
+      "loginRequired": "Login Required",
+      "loginRequiredDesc": "Please login first to view your profile.",
+      "levelProgress": "Level Progress",
+      "stats": {
+        "points": "Points",
+        "streak": "Streak",
+        "accuracy": "Accuracy",
+        "activity": "Activities"
+      },
+      "checkInTitle": "Check-In",
+      "checkInSubtitle": "Check in daily to earn XP and bonus points!",
+      "checkInAction": "Check In Today (+10 XP)",
+      "checkInDone": "Today's Check-in Complete!",
+      "settings": "Settings",
+      "settingsDesc": "Edit info & theme",
+      "logoutDesc": "Sign out safely",
+      "maxLevel": "MAX LEVEL"
+    }
+  },
+  "settings": {
+    "profileSection": "Profile Settings",
+    "avatarUrl": "Avatar Image URL",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Enter your display name",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself",
+    "saveChanges": "Save Changes",
+    "saveSuccess": "Settings saved successfully.",
+    "saveError": "Failed to save settings.",
+    "preferencesSection": "Preferences",
+    "theme": "Theme",
+    "themeDark": "Dark Mode",
+    "themeLight": "Light Mode",
+    "themeToggle": "Change Theme",
+    "language": "Language",
+    "dangerZone": "Account Management",
+    "confirmLogout": "Are you sure you want to log out?"
+  },
+  "level": {
+    "뉴비": "Newbie",
+    "루키": "Rookie",
+    "레귤러": "Regular",
+    "베테랑": "Veteran",
+    "마스터": "Master",
+    "레전드": "Legend"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No new notifications.",
+    "markAllRead": "Mark all as read",
+    "types": {
+      "dm": "You received a new message.",
+      "comment": "New comment on your post.",
+      "like": "New like on your post.",
+      "system": "System Update"
+    },
+    "viewMore": "View More"
+  },
+  "rules": {
+    "title": "Community Rules",
+    "subtitle": "Rules for a safe and healthy community",
+    "prohibited": {
+      "title": "Prohibited Actions",
+      "items": [
+        "Profanity, slander, hate speech and personal attacks",
+        "False information, spreading fake news",
+        "Investment solicitation, promotion of reading rooms, fraud-related posts",
+        "Spamming, flooding, meaningless repetitive posting",
+        "Exposing personal information of others (doxxing)",
+        "Copyright infringing content posting",
+        "Sexual content or illegal content",
+        "Impersonating admin or abusing the system"
+      ]
+    },
+    "penalties": {
+      "title": "Penalties",
+      "v1": { "level": "Tier 1", "action": "Warning", "desc": "Warning message sent upon violation" },
+      "v2": { "level": "Tier 2", "action": "Temporary Suspension", "desc": "7-day restriction after 2+ warnings" },
+      "v3": { "level": "Tier 3", "action": "Permanent Ban", "desc": "Permanent access block for severe or 3+ violations" }
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "item1": "News analysis provided by NovaTrend is **automatically generated by AI** and is not an investment solicitation.",
+      "item2": "Community posts are personal opinions and not the official position of NovaTrend.",
+      "item3": "All investment decisions are **your own responsibility**.",
+      "item4": "Copyright of news headlines belongs to respective publishers; AI summaries are for reference only."
+    },
+    "report": {
+      "title": "How to Report",
+      "step1": "1. Click the **⚑ Report Button** on the top right of the post/comment/message.",
+      "step2": "2. Select the reason and **attach screenshots** if necessary.",
+      "step3": "3. The management team will review and take action within 24 hours.",
+      "urgent": "For urgent matters, please contact {email} directly."
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "nickname": "Nickname",
+    "passwordMin": "Password must be at least 6 characters",
+    "usernameRequired": "Please enter a username",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Password",
+    "registerPasswordPlaceholder": "6+ characters",
+    "confirmEmailTitle": "Verify your email",
+    "confirmEmailDesc": "A verification link has been sent to {email}. Please check your inbox.",
+    "confirmAction": "Confirm",
+    "or": "or",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "successRegister": "Registration complete. Please log in after email verification.",
+    "welcome": "Welcome back, {email}!",
+    "signedOut": "You have been logged out."
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "tabs": {
+      "users": "User Management",
+      "reports": "Report Handling",
+      "posts": "Post Moderation"
+    },
+    "users": {
+        "title": "User List",
+        "search": "Search users...",
+        "role": "Role",
+        "action": "Action",
+        "giveAdmin": "Grant Admin",
+        "removeAdmin": "Revoke Admin",
+        "ban": "Ban",
+        "unban": "Unban",
+        "confirmBan": "Are you sure you want to ban this user?",
+        "confirmUnban": "Are you sure you want to unban this user?"
+    },
+    "reports": {
+        "title": "Report List",
+        "noReports": "No pending reports.",
+        "reporter": "Reporter",
+        "reported": "Reported",
+        "reason": "Reason",
+        "status": "Status",
+        "process": "Process",
+        "dismiss": "Dismiss",
+        "contentLink": "View Content",
+        "pending": "Pending",
+        "resolved": "Resolved"
+    },
+    "roles": {
+        "master": "Master Admin",
+        "admin": "Admin",
+        "user": "User"
+    },
+    "sanctions": {
+        "reasonPrompt": "Enter sanction reason ({level}):",
+        "tempBan7d": "Temporary Ban (7 days)",
+        "applied": "Sanction applied.",
+        "confirmDelete": "Are you sure you want to delete this content?",
+        "deleteAndResolve": "Delete and Resolve"
+    }
   }
 }
