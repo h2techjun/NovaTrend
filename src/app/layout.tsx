@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Ezoic from '@/components/ads/Ezoic';
@@ -44,11 +45,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Ezoic>
-            <div className="flex min-h-screen flex-col">
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <AuthProvider>
+              <div className="flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </AuthProvider>
           </Ezoic>
         </ThemeProvider>
       </body>

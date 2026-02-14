@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -10,94 +10,74 @@ import {
   Clock,
   Eye,
   ChevronRight,
+  Loader2,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase';
+import { useAuth } from '@/components/auth/AuthProvider';
 import DirectMessage from '@/components/community/DirectMessage';
+import type { Post, PostCategory } from '@/types/community';
+import { CATEGORIES, CATEGORY_BADGE } from '@/types/community';
 
-// 데모 게시글
-const DEMO_POSTS = [
-  {
-    id: '1',
-    title: '삼성전자 지금 매수 타이밍일까요?',
-    author: '투자고수',
-    category: 'stock',
-    createdAt: new Date(Date.now() - 600000).toISOString(),
-    likes: 24,
-    views: 182,
-    comments: 8,
-  },
-  {
-    id: '2',
-    title: '비트코인 10만달러 돌파 시 알트코인 전략 공유',
-    author: '크립토매니아',
-    category: 'crypto',
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-    likes: 56,
-    views: 423,
-    comments: 15,
-  },
-  {
-    id: '3',
-    title: 'NewJeans 서울 콘서트 티켓팅 후기 & 좌석 추천',
-    author: '버니즈',
-    category: 'kpop',
-    createdAt: new Date(Date.now() - 7200000).toISOString(),
-    likes: 89,
-    views: 634,
-    comments: 31,
-  },
-  {
-    id: '4',
-    title: '미국 CPI 발표 전 포지션 어떻게 가져가시나요?',
-    author: '월가워리어',
-    category: 'stock',
-    createdAt: new Date(Date.now() - 14400000).toISOString(),
-    likes: 12,
-    views: 95,
-    comments: 4,
-  },
-  {
-    id: '5',
-    title: '이더리움 POS 전환 후 스테이킹 수익률 정리',
-    author: 'ETH홀더',
-    category: 'crypto',
-    createdAt: new Date(Date.now() - 21600000).toISOString(),
-    likes: 34,
-    views: 267,
-    comments: 11,
-  },
-];
-
-const CATEGORIES = [
-  { value: 'all', label: '전체', color: 'brand-600' },
-  { value: 'stock', label: '주식', color: 'emerald-500' },
-  { value: 'crypto', label: '크립토', color: 'amber-500' },
-  { value: 'kpop', label: 'K-POP', color: 'pink-500' },
-  { value: 'free', label: '자유', color: 'blue-500' },
-];
+const PAGE_SIZE = 20;
 
 function formatTimeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff / 60000);
+  if (m < 1) return '방금 전';
   if (m < 60) return `${m}분 전`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}시간 전`;
   return `${Math.floor(h / 24)}일 전`;
 }
 
-const CATEGORY_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-  stock: { label: '주식', bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400' },
-  crypto: { label: '크립토', bg: 'bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400' },
-  kpop: { label: 'K-POP', bg: 'bg-pink-500/10', text: 'text-pink-600 dark:text-pink-400' },
-  free: { label: '자유', bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' },
-};
-
 export default function CommunityPage() {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const { user } = useAuth();
+  const [activeCategory, setActiveCategory] = useState<'all' | PostCategory>('all');
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const filtered = DEMO_POSTS.filter((post) => {
-    if (activeCategory === 'all') return true;
-    return post.category === activeCategory;
-  });
+  const supabase = createClient();
+
+  const fetchPosts = useCallback(async (pageNum: number, category: string, reset = false) => {
+    setLoading(true);
+
+    let query = supabase
+      .from('posts')
+      .select('*, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url, plan)', { count: 'exact' })
+      .eq('is_deleted', false)
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: false })
+      .range(pageNum * PAGE_SIZE, (pageNum + 1) * PAGE_SIZE - 1);
+
+    if (category !== 'all') {
+      query = query.eq('category', category);
+    }
+
+    const { data, count, error } = await query;
+
+    if (!error && data) {
+      setPosts((prev) => reset ? data : [...prev, ...data]);
+      setTotalCount(count ?? 0);
+      setHasMore(data.length === PAGE_SIZE);
+    }
+
+    setLoading(false);
+  }, [supabase]);
+
+  // 카테고리 변경 시 리셋
+  useEffect(() => {
+    setPage(0);
+    fetchPosts(0, activeCategory, true);
+  }, [activeCategory, fetchPosts]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchPosts(nextPage, activeCategory);
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -116,6 +96,7 @@ export default function CommunityPage() {
               <h1 className="text-2xl font-bold">커뮤니티</h1>
               <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 투자 토론, K-POP 덕질, 자유 게시판
+                {totalCount > 0 && <span className="ml-1">· {totalCount}개의 글</span>}
               </p>
             </div>
           </div>
@@ -134,21 +115,21 @@ export default function CommunityPage() {
         {CATEGORIES.map((cat) => (
           <button
             key={cat.value}
-            onClick={() => setActiveCategory(cat.value)}
+            onClick={() => setActiveCategory(cat.value as 'all' | PostCategory)}
             className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               activeCategory === cat.value
                 ? 'bg-brand-600 text-white'
                 : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'
             }`}
           >
-            {cat.label}
+            {cat.emoji} {cat.label}
           </button>
         ))}
       </div>
 
       {/* 게시글 리스트 */}
       <div className="space-y-2">
-        {filtered.map((post, i) => {
+        {posts.map((post, i) => {
           const badge = CATEGORY_BADGE[post.category];
           return (
             <Link key={post.id} href={`/community/${post.id}`}>
@@ -160,6 +141,11 @@ export default function CommunityPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
+                    {post.is_pinned && (
+                      <span className="bg-brand-600/10 text-brand-600 rounded px-1.5 py-0.5 text-[10px] font-bold">
+                        📌 고정
+                      </span>
+                    )}
                     {badge && (
                       <span className={`${badge.bg} ${badge.text} rounded px-1.5 py-0.5 text-[10px] font-bold`}>
                         {badge.label}
@@ -170,10 +156,10 @@ export default function CommunityPage() {
                     </h3>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
-                    <span>{post.author}</span>
+                    <span>{post.author?.username || '익명'}</span>
                     <span className="flex items-center gap-0.5">
                       <Clock className="h-3 w-3" />
-                      {formatTimeAgo(post.createdAt)}
+                      {formatTimeAgo(post.created_at)}
                     </span>
                     <span className="flex items-center gap-0.5">
                       <Eye className="h-3 w-3" />
@@ -182,10 +168,6 @@ export default function CommunityPage() {
                     <span className="flex items-center gap-0.5">
                       <ThumbsUp className="h-3 w-3" />
                       {post.likes}
-                    </span>
-                    <span className="flex items-center gap-0.5">
-                      <MessageSquare className="h-3 w-3" />
-                      {post.comments}
                     </span>
                   </div>
                 </div>
@@ -196,14 +178,42 @@ export default function CommunityPage() {
         })}
       </div>
 
-      {filtered.length === 0 && (
+      {/* 로딩 */}
+      {loading && (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-brand-600" />
+        </div>
+      )}
+
+      {/* 빈 상태 */}
+      {!loading && posts.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-[hsl(var(--muted-foreground))]">게시글이 없습니다.</p>
+          <MessageSquare className="h-12 w-12 text-[hsl(var(--muted-foreground))] mx-auto mb-3 opacity-30" />
+          <p className="text-[hsl(var(--muted-foreground))] mb-4">아직 게시글이 없습니다.</p>
+          <Link
+            href="/community/write"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+          >
+            <PenSquare className="h-4 w-4" />
+            첫 글을 작성해보세요
+          </Link>
+        </div>
+      )}
+
+      {/* 더보기 */}
+      {!loading && hasMore && posts.length > 0 && (
+        <div className="flex justify-center pt-6">
+          <button
+            onClick={loadMore}
+            className="rounded-xl bg-[hsl(var(--muted))] px-6 py-3 text-sm font-medium hover:bg-[hsl(var(--border))] transition-colors"
+          >
+            더 보기
+          </button>
         </div>
       )}
 
       {/* 쪽지 플로팅 버튼 */}
-      <DirectMessage />
+      {user && <DirectMessage />}
     </div>
   );
 }
